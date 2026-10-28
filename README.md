@@ -2,7 +2,7 @@
 
 [统一使用文档](https://github.com/xlle-er/KARI-DF26) · [首次安装](https://github.com/xlle-er/KARI-DF26/blob/main/docs/installation.md) · [部署工具](https://github.com/xlle-er/KARI-DF26-Skill)
 
-ESP32-S3 底盘固件：BLE / Wi-Fi 控制、热点配网、设备面板、持久化接线、方向校准和双分区 OTA。当前业务版本 **2.2.2**，首次 KARI 构建。支持 N16R8、N8R8；本次重新构建与契约检查已通过，USB、真实电机和 OTA 待实际设备验收。详见 [VERIFICATION.md](VERIFICATION.md)。
+ESP32-S3 底盘固件：BLE / Wi-Fi 控制、热点配网、设备面板、持久化接线、方向校准和双分区 OTA。当前业务版本 **2.2.2**，首次 KARI 构建。支持 N16R8、N8R8；本次重新构建与契约检查已通过，维护者确认既有真机测试通过并授权正式稳定发布。详见 [VERIFICATION.md](VERIFICATION.md)。
 
 ## 官方接线
 
@@ -15,7 +15,7 @@ GPIO 为芯片编号，不是排针序号。ESP32 与 L298N 共地，拔掉 ENA 
 
 ## 首次安装
 
-推荐使用 [KARI 部署工具](https://github.com/xlle-er/KARI-DF26-Skill)。网页安装源码位于 [installer](installer)，公开安装入口将在配套发布后启用；本地运行：
+推荐使用 [KARI 部署工具](https://github.com/xlle-er/KARI-DF26-Skill)。网页安装源码位于 [installer](installer)，[公开安装入口](https://xlle-er.github.io/KARI-DF26-Firmware/)；本地运行：
 
 ```sh
 python3 scripts/build.py
@@ -63,6 +63,6 @@ python3 tests/contracts.py --require-clients
 
 [KARI Releases](https://github.com/xlle-er/KARI-DF26-Firmware/releases) 使用新仓库地址。OTA 包为 `kari-s3.bin` / `kari-s3-n8r8.bin`，配套 JSON 包含版本、板型、大小和 SHA-256。USB 使用分段清单，OTA 使用应用包，两者不能互换。
 
-尚未通过真机验收的构建保留为发布草稿，不作为正式稳定版。没有稳定 Release 时，在线 `latest` 不可用；可从本地构建结果安装。安装站点与稳定发布待验收完成后启用。
+稳定版发布后，在线更新及部署工具默认从 `latest` 获取配套清单；安装站点从同一版本发布资产生成，并核验两种板型文件。
 
 相关客户端：[Web](https://github.com/xlle-er/KARI-DF26-WEB) · [Android](https://github.com/xlle-er/KARI-DF26-ANDROID) · [iOS](https://github.com/xlle-er/KARI-DF26-IOS)。
