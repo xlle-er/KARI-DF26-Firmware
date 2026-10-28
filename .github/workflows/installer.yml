@@ -1,0 +1,42 @@
+name: Prepare installer site (no deployment)
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag with both board USB assets (leave blank for latest stable)'
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: installer/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download validated release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [ -z "$RELEASE_TAG" ]; then
+            RELEASE_TAG=$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)
+          fi
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --dir /tmp/kari-release
+      - name: Verify and stage same-origin firmware
+        run: python scripts/prepare-installer.py --assets /tmp/kari-release --require-all
+      - run: npm ci
+        working-directory: installer
+      - run: npm test && npm run build
+        working-directory: installer
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kari-installer-site
+          path: installer/dist
