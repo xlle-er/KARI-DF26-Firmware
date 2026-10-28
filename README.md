@@ -1,5 +1,9 @@
 # KARI DF26 Firmware
 
+**语言 / Language:** [简体中文](#简体中文) · [English](#english)
+
+## 简体中文
+
 [统一使用文档](https://github.com/xlle-er/KARI-DF26) · [首次安装](https://github.com/xlle-er/KARI-DF26/blob/main/docs/installation.md) · [部署工具](https://github.com/xlle-er/KARI-DF26-Skill)
 
 ESP32-S3 底盘固件：BLE / Wi-Fi 控制、热点配网、设备面板、持久化接线、方向校准和双分区 OTA。当前业务版本 **2.2.2**，首次 KARI 构建。支持 N16R8、N8R8；本次重新构建与契约检查已通过，维护者确认既有真机测试通过并授权正式稳定发布。详见 [VERIFICATION.md](VERIFICATION.md)。
@@ -30,7 +34,7 @@ npm run dev
 
 ## 配网与管理
 
-连接实际广播的 `KARI-…` 热点，打开 `http://192.168.4.1/`；接入路由器后，使用设备当前局域网 IP。设备 ID 为 `kari-<MAC>`，mDNS 为 `_kari._tcp`，BLE 名称为 `KARI Body`。
+连接实际广播的 `KARI-…` 热点，打开 `http://192.168.4.1/`；接入路由器后，使用设备当前局域网 IP。设备 ID 为 `kari-<MAC>`，mDNS 为 `_kari._tcp`，BLE 名称为 `KARI-名字` 或默认 `KARI-识别码`。
 
 初始设备管理用户名为 `admin`，初始密码为 `12345678`，请按设备面板提供的功能修改。密码不是路由器密码。长按 BOOT 约三秒后松开可重新进入配置入口。
 
@@ -66,3 +70,72 @@ python3 tests/contracts.py --require-clients
 稳定版发布后，在线更新及部署工具默认从 `latest` 获取配套清单；安装站点从同一版本发布资产生成，并核验两种板型文件。
 
 相关客户端：[Web](https://github.com/xlle-er/KARI-DF26-WEB) · [Android](https://github.com/xlle-er/KARI-DF26-ANDROID) · [iOS](https://github.com/xlle-er/KARI-DF26-IOS)。
+
+## English
+
+[Unified usage guide](https://github.com/xlle-er/KARI-DF26) · [First installation](https://github.com/xlle-er/KARI-DF26/blob/main/docs/installation.md) · [Deployment tool](https://github.com/xlle-er/KARI-DF26-Skill)
+
+ESP32-S3 chassis firmware provides BLE/Wi-Fi control, hotspot provisioning, device management, persistent wiring, direction calibration and dual-partition OTA. Current business version is **2.2.2**, the first KARI build, for N16R8 / N8R8. Rebuild and contract checks passed; the maintainer confirmed prior physical tests and approved stable publication. See [VERIFICATION.md](VERIFICATION.md).
+
+### Official wiring
+
+| L298N | GPIO |
+| --- | --- |
+| Left IN1 / IN2 / ENA | 16 / 15 / 17 |
+| Right IN3 / IN4 / ENB | 7 / 6 / 5 |
+
+Use chip GPIO numbers, not header positions. Share ground and remove ENA/ENB jumpers. Disconnect motor power for initial configuration. Firmware does not enable motor output before wiring confirmation; floating inputs need hardware pull-downs or disconnected power.
+
+### First installation
+
+Use the [KARI deployment tool](https://github.com/xlle-er/KARI-DF26-Skill) or [public web installer](https://xlle-er.github.io/KARI-DF26-Firmware/). Installer source is in [installer](installer). For local operation:
+
+```sh
+python3 scripts/build.py
+cd installer
+npm ci
+npm run dev
+```
+
+Open the displayed localhost URL in desktop Chrome / Edge and select the matching board. Building itself does not flash. Segmented USB manifests are `kari-s3-usb.json` for N16R8 and `kari-s3-n8r8-usb.json` for N8R8; never mix them.
+
+The new configuration namespace requires Wi-Fi setup, wiring confirmation and calibration again. USB installation does not automatically erase the entire Flash and does not read historical-brand settings.
+
+### Network and management
+
+Join the actual advertised `KARI-…` hotspot and open `http://192.168.4.1/`; after joining a router, use the current LAN IP. Device ID is `kari-<MAC>`, mDNS is `_kari._tcp`, and the advertised name follows the configured KARI identity.
+
+Initial administration credentials are user `admin`, password `12345678`; change them through the device panel. This is not the router password. Hold BOOT for about three seconds and release to reopen configuration.
+
+Lift wheels for brief direction tests, then save inversion/swap. Saving, takeover and upgrades stop first; old actions never resume automatically.
+
+### Development
+
+Pinned tools: Arduino ESP32 **3.3.12**, ArduinoJson **7.4.3**, NimBLE-Arduino **2.5.1**. Install Arduino CLI, then:
+
+```sh
+./scripts/build.sh
+python3 tests/contracts.py
+cd installer
+npm ci
+npm test
+npm run build
+```
+
+`build.sh` builds both profiles; `--board n16r8` / `--board n8r8` selects one. `dist/` contains application images, USB segments/manifests, hashes, source digests and installer data. Static site output is `installer/dist/`.
+
+For integrated checks, place Android/iOS/Web/Skill repositories as siblings using their project names:
+
+```sh
+python3 tests/contracts.py --require-clients
+```
+
+Strict mode fails when a required client is absent. Standalone mode runs locally available checks. Hardware policy originates from [hardware/boards.json](hardware/boards.json); validate generated consumers with `scripts/sync-hardware.py --check`.
+
+### Updates and releases
+
+[KARI Releases](https://github.com/xlle-er/KARI-DF26-Firmware/releases) uses the new repository. OTA images are `kari-s3.bin` / `kari-s3-n8r8.bin`; JSON records version, board, size and SHA-256. USB segments and OTA applications are not interchangeable.
+
+Online updates and the deployment tool default to `latest` stable manifests. The installation site is generated from and verifies the same release's two board profiles.
+
+Clients: [Web](https://github.com/xlle-er/KARI-DF26-WEB) · [Android](https://github.com/xlle-er/KARI-DF26-ANDROID) · [iOS](https://github.com/xlle-er/KARI-DF26-IOS).
