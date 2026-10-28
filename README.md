@@ -1,5 +1,9 @@
 # KARI DF26 Firmware
 
+<p align="center">
+  <img src="docs/assets/app-icon-rounded.png" alt="KARI 图标 / KARI app icon" width="128" height="128">
+</p>
+
 **语言 / Language:** [简体中文](#简体中文) · [English](#english)
 
 ## 简体中文
